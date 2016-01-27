@@ -1,7 +1,7 @@
 /* Based on J. Leffer's version at http://stackoverflow.com/a/675193/2366315 */
 #include <errno.h>
 #include <string.h>
-#include <memory.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 
 static int do_mkdir(const char *path, mode_t mode)

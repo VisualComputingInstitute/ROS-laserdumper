@@ -4,7 +4,7 @@ project(lb_laserdumper)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp std_msgs)
+find_package(catkin REQUIRED COMPONENTS roscpp std_msgs cv_bridge image_transport message_filters)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -99,16 +99,18 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES lb_laserdumper
 #  CATKIN_DEPENDS other_catkin_pkg
-#  DEPENDS system_lib
+  DEPENDS opencv
 )
 
 ###########
 ## Build ##
 ###########
 
+find_package(OpenCV 2 REQUIRED core imgproc highgui)
+
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
+include_directories(${OpenCV_INCLUDE_DIRS})
 
 ## Declare a C++ library
 # add_library(lb_laserdumper
@@ -122,15 +124,16 @@ catkin_package(
 
 ## Declare a C++ executable
 add_executable(lb_laserdumper src/dump.cpp)
+add_executable(lb_laser_rgb_dumper src/dump_rgb.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(lb_laserdumper ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(lb_laser_rgb_dumper ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(lb_laserdumper
-  ${catkin_LIBRARIES}
-)
+target_link_libraries(lb_laserdumper ${catkin_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(lb_laser_rgb_dumper ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 #############
 ## Install ##
@@ -147,7 +150,7 @@ target_link_libraries(lb_laserdumper
 # )
 
 ## Mark executables and/or libraries for installation
-install(TARGETS lb_laserdumper lb_laserdumper
+install(TARGETS lb_laserdumper lb_laser_rgb_dumper
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
